@@ -7,12 +7,7 @@ import Nav from "../../components/Nav";
 import AppContext from "../../context";
 import { DataGrid } from "@mui/x-data-grid";
 import Button from "@mui/material/Button";
-import Dialog, {DialogProps} from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import {Box, IconButton} from '@mui/material';
+
 import CustomerForm from "../../components/CustomerForm";
 
 const EmployeePage = () => {
@@ -60,24 +55,7 @@ const EmployeePage = () => {
         </div>
        
       </div>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>New Customer</DialogTitle>
-        <DialogContent>
-          <Box
-            noValidate
-            component='form'
-            sx={{
-              '& > :not(style)': {m: 1, width: '60ch'},
-            }}
-          >
-         <CustomerForm/>
-          </Box>
-        </DialogContent>
-        <DialogActions>
-        <Button>Add</Button>
-          <Button onClick={handleClose}>Close</Button>
-        </DialogActions>
-      </Dialog>
+    <CustomerForm  customers={customers} handleClose={handleClose} open={open} setOpen={setOpen}/>
     </>
   );
 };
