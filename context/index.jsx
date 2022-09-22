@@ -17,10 +17,11 @@ const AppContext = createContext();
 
 export const AppWrapper = ({ children }) => {
   const [customers, setCustomers] = useState([]);
+  const [wash, setWash] = useState([]);
 
   const fetchCustomers = () => {
     const reference = collection(db, "customers");
-    const dbQuery = query(reference, orderBy("number", "asc"));
+    const dbQuery = query(reference, orderBy("index", "asc"));
 
     onSnapshot(dbQuery, (querySnapshot) => {
       let i = 1;
@@ -34,6 +35,42 @@ export const AppWrapper = ({ children }) => {
           // if (doc.data().dob != null && doc.data().dob !== "undefined") {
           //   data.dob = data.dob.toDate();
           // }
+          if (doc.data().date != null) {
+            data.date = data.date.toDate().toLocaleDateString("en-US");
+          } else {
+            console.log("else");
+          }
+
+          return {
+            id: doc.id,
+            index: i++,
+            ...data,
+          };
+        })
+      );
+    });
+  };
+  const fetchWash = () => {
+    const reference = collection(db, "wash");
+    const dbQuery = query(reference, orderBy("index", "asc"));
+
+    onSnapshot(dbQuery, (querySnapshot) => {
+      let i = 1;
+
+      // Load data to Array
+      setWash(
+        querySnapshot.docs.map((doc) => {
+          let data = doc.data();
+
+          // // Convert Date
+          // if (doc.data().dob != null && doc.data().dob !== "undefined") {
+          //   data.dob = data.dob.toDate();
+          // }
+          if (doc.data().date != null) {
+            data.date = data.date.toDate().toLocaleDateString("en-US");
+          } else {
+            console.log("else");
+          }
 
           return {
             id: doc.id,
@@ -46,12 +83,16 @@ export const AppWrapper = ({ children }) => {
   };
   useEffect(() => {
     fetchCustomers();
+    fetchWash();
   }, []);
 
   let sharedState = {
-  customers
+    customers,
+    wash
   };
 
-  return <AppContext.Provider value={sharedState}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={sharedState}>{children}</AppContext.Provider>
+  );
 };
 export default AppContext;

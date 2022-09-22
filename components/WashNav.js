@@ -3,15 +3,14 @@ import styles from "../styles/header.module.css";
 import Link from "next/link";
 
 
-const Nav = ({logout}) => {
+const WashNav = () => {
   return (
     <div className={styles.navbar}>
     <div className={styles.navItems} >
-    <button onClick={() => {logout()}} className={styles.dropbtn}>logout</button>
-    <div className={styles.Link}>
-    <Link href="/Employee/Wash">Wash</Link>
-    </div>
-    
+        <div className={styles.Link}>
+        <Link href="/Employee/EmployeePage">Go Back</Link>
+        </div>
+  
     </div>
 
     <div className={styles.logo}>
@@ -21,4 +20,4 @@ const Nav = ({logout}) => {
   )
 }
 
-export default Nav
+export default WashNav
