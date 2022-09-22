@@ -93,9 +93,20 @@ const [items, setItems] = useState(defaultValuesOfItems );
       await addDoc(
         membersRef, {
           name: customers[index].name,
+          phone:customers[index].number,
           ...items
         }
-      );
+      ).then(() => {
+        setOpen(false);
+        setSnackbarMessage("item added");
+        setSnackbarType("success");
+        setOpenSnackbar(true);
+      }).catch((e) => {
+        console.log(e);
+        setSnackbarMessage(e);
+        setSnackbarType("error");
+        setOpenSnackbar(true);
+      });
     }
   };
 
@@ -108,7 +119,7 @@ const [items, setItems] = useState(defaultValuesOfItems );
         type={snackbarType}
       />
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>New Customer</DialogTitle>
+        <DialogTitle>{!itemAdd && "New Customer" || "Add item"}</DialogTitle>
 
        {!itemAdd && <DialogContent>
           <Box

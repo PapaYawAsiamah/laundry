@@ -9,7 +9,7 @@ const Nav = ({logout}) => {
     <div className={styles.navItems} >
     <button onClick={() => {logout()}} className={styles.dropbtn}>logout</button>
     <div className={styles.Link}>
-    <Link href="/Employee/Wash">Wash</Link>
+    <Link href="/Employee/Wash">Items</Link>
     </div>
     
     </div>
