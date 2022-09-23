@@ -18,6 +18,8 @@ const AppContext = createContext();
 export const AppWrapper = ({ children }) => {
   const [customers, setCustomers] = useState([]);
   const [wash, setWash] = useState([]);
+  const [amounts, setAmounts] = useState([])
+  const [paid, setPaid] = useState([])
 
   const fetchCustomers = () => {
     const reference = collection(db, "customers");
@@ -35,11 +37,11 @@ export const AppWrapper = ({ children }) => {
           // if (doc.data().dob != null && doc.data().dob !== "undefined") {
           //   data.dob = data.dob.toDate();
           // }
-          if (doc.data().date != null) {
-            data.date = data.date.toDate().toLocaleDateString("en-US");
-          } else {
-            console.log("else");
-          }
+          // if (doc.data(). createdAt != null) {
+          //   data.date = data. createdAt.toDate().toLocaleDateString("en-US");
+          // } else {
+          //   console.log("else");
+          // }
 
           return {
             id: doc.id,
@@ -66,8 +68,70 @@ export const AppWrapper = ({ children }) => {
           // if (doc.data().dob != null && doc.data().dob !== "undefined") {
           //   data.dob = data.dob.toDate();
           // }
-          if (doc.data().date != null) {
-            data.date = data.date.toDate().toLocaleDateString("en-US");
+          if (doc.data(). createdAt != null) {
+            data. createdAt = data. createdAt.toDate().toLocaleDateString("en-US");
+          } else {
+            console.log("else");
+          }
+
+          return {
+            id: doc.id,
+            index: i++,
+            ...data,
+          };
+        })
+      );
+    });
+  };
+  const fetchMoney = () => {
+    const reference = collection(db, "amount");
+    const dbQuery = query(reference, orderBy("id", "asc"));
+
+    onSnapshot(dbQuery, (querySnapshot) => {
+      let i = 1;
+
+      // Load data to Array
+      setAmounts(
+        querySnapshot.docs.map((doc) => {
+          let data = doc.data();
+
+          // // Convert Date
+          // if (doc.data().dob != null && doc.data().dob !== "undefined") {
+          //   data.dob = data.dob.toDate();
+          // }
+          if (doc.data(). createdAt != null) {
+            data. createdAt = data. createdAt.toDate().toLocaleDateString("en-US");
+          } else {
+            console.log("else");
+          }
+
+          return {
+            id: doc.id,
+            index: i++,
+            ...data,
+          };
+        })
+      );
+    });
+  };
+  const fetchPaid = () => {
+    const reference = collection(db, "paid");
+    const dbQuery = query(reference, orderBy("id", "asc"));
+
+    onSnapshot(dbQuery, (querySnapshot) => {
+      let i = 1;
+
+      // Load data to Array
+      setPaid(
+        querySnapshot.docs.map((doc) => {
+          let data = doc.data();
+
+          // // Convert Date
+          // if (doc.data().dob != null && doc.data().dob !== "undefined") {
+          //   data.dob = data.dob.toDate();
+          // }
+          if (doc.data(). createdAt != null) {
+            data. createdAt = data. createdAt.toDate().toLocaleDateString("en-US");
           } else {
             console.log("else");
           }
@@ -84,11 +148,15 @@ export const AppWrapper = ({ children }) => {
   useEffect(() => {
     fetchCustomers();
     fetchWash();
+    fetchMoney();
+    fetchPaid()
   }, []);
 
   let sharedState = {
     customers,
-    wash
+    wash,
+    amounts,
+    paid
   };
 
   return (

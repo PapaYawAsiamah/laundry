@@ -27,7 +27,7 @@ const CustomerForm = ({
   open,
   setItemAdd,
   itemAdd,
-  editId
+  editId,
 }) => {
   const defaultValues = {
     name: "",
@@ -35,28 +35,16 @@ const CustomerForm = ({
   };
   const [customer, setCustomer] = useState(defaultValues);
 
+  //when adding item
+  const defaultValuesOfItems = {
+    item: "",
+    quantity: "",
+    description: "",
+    price: "",
 
- //when adding item
- const defaultValuesOfItems = {
-  item: "",
-  quantity: "",
-  description: "",
-  price: "",
-  date:  serverTimestamp(),
-  index: Date.now()
-};
-const [items, setItems] = useState(defaultValuesOfItems );
-
-
-
-
-
-
-
-
-
-
-
+    index: Date.now(),
+  };
+  const [items, setItems] = useState(defaultValuesOfItems);
 
   //snackbar
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -68,44 +56,57 @@ const [items, setItems] = useState(defaultValuesOfItems );
 
   const addCustomer = async (e) => {
     e.preventDefault();
-    if(!itemAdd){
-    const customersRef = collection(db, "customers");
+    if (!itemAdd) {
+      const customersRef = collection(db, "customers");
 
-    await addDoc(customersRef, {
-      ...customer,
-      index: Date.now().toString(),
-    })
-      .then(() => {
-        setOpen(false);
-        setSnackbarMessage("customer added successfully");
-        setSnackbarType("success");
-        setOpenSnackbar(true);
+      await addDoc(customersRef, {
+        ...customer,
+        index: Date.now().toString(),
       })
-      .catch((e) => {
-        console.log(e);
-        setSnackbarMessage(e);
-        setSnackbarType("error");
-        setOpenSnackbar(true);
-      });
+        .then(() => {
+          setOpen(false);
+          setSnackbarMessage("customer added successfully");
+          setSnackbarType("success");
+          setOpenSnackbar(true);
+        })
+        .catch((e) => {
+          console.log(e);
+          setSnackbarMessage(e);
+          setSnackbarType("error");
+          setOpenSnackbar(true);
+        });
     } else {
       const index = customers.findIndex((member) => member.id === editId);
       const membersRef = collection(db, "wash");
-      await addDoc(
-        membersRef, {
-          name: customers[index].name,
-          phone:customers[index].number,
-          ...items
-        }
-      ).then(() => {
-        setOpen(false);
-        setSnackbarMessage("item added");
-        setSnackbarType("success");
-        setOpenSnackbar(true);
-      }).catch((e) => {
-        console.log(e);
-        setSnackbarMessage(e);
-        setSnackbarType("error");
-        setOpenSnackbar(true);
+
+      await addDoc(membersRef, {
+        name: customers[index].name,
+        phone: customers[index].number,
+        createdAt: serverTimestamp(),
+        ...items,
+      })
+        .then(() => {
+          setOpen(false);
+          setSnackbarMessage("item added");
+          setSnackbarType("success");
+          setOpenSnackbar(true);
+        })
+        .catch((e) => {
+          console.log(e);
+          setSnackbarMessage(e);
+          setSnackbarType("error");
+          setOpenSnackbar(true);
+        });
+
+      const membersReff = collection(db, "amount");
+
+      await addDoc(membersReff, {
+        name: customers[index].name,
+        phone: customers[index].number,
+        createdAt: serverTimestamp(),
+        index: customers[index].index,
+        amount: parseInt(items.price),
+        id: Date.now()
       });
     }
   };
@@ -119,43 +120,44 @@ const [items, setItems] = useState(defaultValuesOfItems );
         type={snackbarType}
       />
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>{!itemAdd && "New Customer" || "Add item"}</DialogTitle>
+        <DialogTitle>{(!itemAdd && "New Customer") || "Add item"}</DialogTitle>
 
-       {!itemAdd && <DialogContent>
-          <Box
-            noValidate
-            component="form"
-            sx={{
-              "& > :not(style)": { m: 1, width: "60ch" },
-            }}
-          >
-            <TextField
-              required
-              label="Name"
-              margin="normal"
-              value={customers.name}
-              onChange={(e) =>
-                setCustomer({ ...customer, name: e.target.value })
-              }
-            />
-            <TextField
-              required
-              type="number"
-              label="phone"
-              margin="normal"
-              value={customers.number}
-              onChange={(e) =>
-                setCustomer({ ...customer, number: e.target.value })
-              }
-            />
-          </Box>
-        </DialogContent>
-        } 
-        {
-          itemAdd && <DialogContent>
-            <ItemsForm items={items} setItems={setItems}/>
+        {!itemAdd && (
+          <DialogContent>
+            <Box
+              noValidate
+              component="form"
+              sx={{
+                "& > :not(style)": { m: 1, width: "60ch" },
+              }}
+            >
+              <TextField
+                required
+                label="Name"
+                margin="normal"
+                value={customers.name}
+                onChange={(e) =>
+                  setCustomer({ ...customer, name: e.target.value })
+                }
+              />
+              <TextField
+                required
+                type="number"
+                label="phone"
+                margin="normal"
+                value={customers.number}
+                onChange={(e) =>
+                  setCustomer({ ...customer, number: e.target.value })
+                }
+              />
+            </Box>
           </DialogContent>
-        }
+        )}
+        {itemAdd && (
+          <DialogContent>
+            <ItemsForm items={items} setItems={setItems} />
+          </DialogContent>
+        )}
         <DialogActions>
           <Button onClick={addCustomer}>Add</Button>
           <Button onClick={handleClose}>Close</Button>

@@ -22,6 +22,10 @@ export default function middleware(req){
 
     if(!verify2 && url.includes("/EmployeePage")){
         return NextResponse.redirect(new URL('/Employee/EmployeeLogin', url))
+    } else if(!verify2 && url.includes("/Wash")){
+        return NextResponse.redirect(new URL('/Employee/EmployeeLogin', url))
+    } else if(!verify2 && url.includes("/Finances")){
+        return NextResponse.redirect(new URL('/Employee/EmployeeLogin', url))
     }
 
     if(verify2 && url.includes("/EmployeeLogin")){
