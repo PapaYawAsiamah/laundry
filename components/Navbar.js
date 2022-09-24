@@ -2,6 +2,7 @@ import React from "react";
 import styles from "../styles/header.module.css";
 import Link from "next/link";
 
+
 const Navbar = () => {
   return (
     <div className={styles.navbar}>

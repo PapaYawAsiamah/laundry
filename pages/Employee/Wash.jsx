@@ -3,40 +3,56 @@ import AppContext from "../../context";
 import WashNav from "../../components/WashNav";
 import { DataGrid } from "@mui/x-data-grid";
 import Autocomplete from "@mui/material/Autocomplete";
-import DatePicker from "react-datepicker";
+
 import { TextField, IconButton } from "@mui/material";
-import "react-datepicker/dist/react-datepicker.css";
+
 import CheckIcon from "@mui/icons-material/Check";
 import AlertDialog from "../../components/AlertDialog";
 import { doc, deleteDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-
+import CustomSnackbar from "../../components/CustomSnackbar";
 const Wash = () => {
   const { customers, wash } = useContext(AppContext);
   const [find, setFind] = useState("");
   const [filtered, setFiltered] = useState([]);
+ 
 
   //checkout
   const [selectedItemID, setSelectedItemID] = useState();
   const [triggerDialog, setTriggerDialog] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [checkout, setCheckout] = useState(false);
+  //snackbar
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarType, setSnackbarType] = useState("error");
+  const closeSnackbar = () => {
+    setOpenSnackbar(false);
+  };
   const closeAlertDialog = () => {
     setTriggerDialog(false);
+  
   };
   const deleteItem = async (docId) => {
+  
     setCheckout(true);
     setSelectedItemID(docId);
     setAlertMessage("checkout cannot be undone");
 
     setTriggerDialog(true);
   };
+
+
   const confirmDelete = async () => {
     const docRef = doc(db, "wash", selectedItemID);
 
     await deleteDoc(docRef)
       .then((res) => {
         closeAlertDialog();
+        setSnackbarMessage("checked out");
+        setSnackbarType("success");
+        setOpenSnackbar(true);
+        
       })
       .catch((e) => {
         console.log(e);
@@ -124,11 +140,17 @@ const Wash = () => {
       //  setStudents(filtered)
       // console.log(filtered)
     );
-  }, [find, customers]);
+  }, [find,wash ]);
 
   return (
     <>
       <WashNav />
+      <CustomSnackbar
+        open={openSnackbar}
+        handleClose={closeSnackbar}
+        message={snackbarMessage}
+        type={snackbarType}
+      />
       <AlertDialog
         triggerDialog={triggerDialog}
         handleClose={closeAlertDialog}
@@ -144,7 +166,8 @@ const Wash = () => {
         }}
         value={find}
       />
-      <div style={{ height: 500, width: "100%", marginTop: 10 }}>
+
+     <div style={{ height: 500, width: "100%", marginTop: 10 }}>
         <DataGrid
           rows={filtered}
           columns={columns}
@@ -154,6 +177,7 @@ const Wash = () => {
           disableSelectionOnClick
         />
       </div>
+      
     </>
   );
 };

@@ -156,7 +156,8 @@ export const AppWrapper = ({ children }) => {
     customers,
     wash,
     amounts,
-    paid
+    paid,
+   
   };
 
   return (
